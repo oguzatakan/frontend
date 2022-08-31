@@ -1,7 +1,9 @@
 import React from "react";
-import { signup, changeLanguage } from '../api/apiCalls';
+import { signup } from '../api/apiCalls';
 import Input from "../components/Input";
 import { withTranslation } from 'react-i18next';
+import ButtonWithProgress from "../components/ButtonWithProgress";
+import { withApiProgress } from "../shared/ApiProgress";
 
 class UserSignupPage extends React.Component {
   state = {
@@ -9,7 +11,6 @@ class UserSignupPage extends React.Component {
     displayName: null,
     password: null,
     passwordRepeat: null,
-    pendingApiCall: false,
     errors: {}
   };
 
@@ -44,7 +45,6 @@ class UserSignupPage extends React.Component {
       displayName,
       password,
     };
-    this.setState({ pendingApiCall: true });
 
     try{
       const response = await signup(body);
@@ -53,20 +53,12 @@ class UserSignupPage extends React.Component {
         this.setState({errors: error.response.data.validationErrors });
       }
     }
-
-    this.setState({ pendingApiCall: false });
   };
 
-  onChangeLanguage = language => {
-    const { i18n } = this.props;
-    i18n.changeLanguage(language);
-    changeLanguage(language);
-  }
-
   render() {
-    const { pendingApiCall, errors } = this.state;
+    const { errors } = this.state;
     const { username, displayName, password, passwordRepeat } = errors;
-    const { t } = this.props;
+    const { t, pendingApiCall } = this.props;
 
     return (
       <div className="container">
@@ -77,24 +69,21 @@ class UserSignupPage extends React.Component {
           <Input name="password" label={t("Password")} error={password} onChange={this.onChange} type="password" />
           <Input name="passwordRepeat" label={t("Password Repeat")} error={passwordRepeat} onChange={this.onChange} type="password" />
           <div className="text-center">
-            <button
-              className="btn btn-primary"
+            <ButtonWithProgress
               onClick={this.onClickSignup}
               disabled={pendingApiCall || passwordRepeat !== undefined}
-            >
-              {pendingApiCall && <span className="spinner-border spinner-border-sm"></span>} {t('Sign Up')}
-            </button>
-          </div>
-          <div>
-            <img width={"35"} height={"35"} src = "https://freepikpsd.com/file/2019/10/yuvarlak-türk-bayrağı-png-6-Transparent-Images.png" alt="Turkısh Flag" onClick={() => this.onChangeLanguage('tr')} style={{cursor: 'pointer'}}></img>
-            <img width={"35"} height={"35"} src = "https://e7.pngegg.com/pngimages/1020/23/png-clipart-logo-primera-air-organization-business-english-language-british-flag-flag-logo.png" alt="USA Flag" onClick={() => this.onChangeLanguage('en')} style={{cursor: 'pointer'}}></img>
+              pendingApiCall={pendingApiCall}
+              text={t('Sign Up')}
+            />
           </div>
         </form>
       </div>
     );
   }
 }
+const UserSignUpPageWithApiProgress = withApiProgress(UserSignupPage, '/api/1.0/users')
 
-const UserSignupPageWithTranslation = withTranslation()(UserSignupPage);
+const UserSignupPageWithTranslation = withTranslation()(UserSignUpPageWithApiProgress);
+
 
 export default UserSignupPageWithTranslation;
