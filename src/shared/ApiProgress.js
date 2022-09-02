@@ -16,13 +16,12 @@ export function withApiProgress(WrappedComponent, apiPath) {
         };
       
         componentDidMount() {
-          axios.interceptors.request.use((request) => {
-         
+          this.requestInterceptor = axios.interceptors.request.use((request) => {
             this.updateApiCallFor(request.url, true);
             return request;
           });
       
-          axios.interceptors.response.use(
+          this.responseInterceptor = axios.interceptors.response.use(
             (response) => {
               this.updateApiCallFor(response.config.url, false);
               return response;
@@ -33,6 +32,11 @@ export function withApiProgress(WrappedComponent, apiPath) {
             }
           );
         }
+
+        componentWillUnmount(){
+          axios.interceptors.request.eject(this.requestInterceptor);
+          axios.interceptors.response.eject(this.responseInterceptor);
+        }
       
         updateApiCallFor = (url, inProgress) => {
           if(url === apiPath) {
@@ -41,8 +45,9 @@ export function withApiProgress(WrappedComponent, apiPath) {
         }
       
         render() {
-          const { pendingApiCall } = this.state;
-          return <WrappedComponent pendingApiCall={pendingApiCall} {...this.props} />;
+          const pendingApiCall = this.state.pendingApiCall || this.props.pendingApiCall;
+
+          return <WrappedComponent {...this.props} pendingApiCall={pendingApiCall} />;
         }
       };
 }
