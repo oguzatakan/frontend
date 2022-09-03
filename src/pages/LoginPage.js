@@ -1,58 +1,41 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
 import { withTranslation } from "react-i18next";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import { withApiProgress } from "../shared/ApiProgress";
 import { connect } from "react-redux";
 import { loginHandler } from "../redux/authActions";
-//import { Authentication } from "../shared/AuthenticationContext";
 
-class LoginPage extends Component {
+const LoginPage = (props) => {
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
+  const [error, setError] = useState();
 
-  //static contextType = Authentication;
+  useEffect(() => {
+    setError(undefined)
+  }, [username,password])
 
-  state = {
-    username: null,
-    password: null,
-    error: null
-  };
-
-  onChange = (event) => {
-    const { name, value } = event.target;
-    this.state({
-      [name]: value,
-      error: null
-    });
-  };
-
-  onClickLogin = async (event) => {
+  const onClickLogin = async (event) => {
     event.preventDefault();
-    const { username, password } = this.state;
     const creds = {
       username,
       password
     };
 
-    const { history,dispatch } = this.props;
+    const { history,dispatch } = props;
     const { push } = history;
 
-    this.setState({
-        error: null
-    });
+    setError(undefined);
+
     try {
       await dispatch(loginHandler(creds))
       push('/');
     } catch (apiError) {
-      this.setState({
-        error: apiError.response.data.message
-      });
+      setError(apiError.response.data.message);
     }
   };
 
-  render() {
-    const { t, pendingApiCall } = this.props;
-    const { error } = this.state;
-
+  const { t, pendingApiCall } = props;
 
     return (
       <div className="container">
@@ -60,14 +43,11 @@ class LoginPage extends Component {
           <h1 className="text-center">{t("Login")}</h1>
           <Input
             label={t("Username")}
-            name="username"
-            onChange={this.onChange}
-          />
+            onChange={(event) => setUsername(event.target.value) }/>
           <Input
             label={t("Password")}
-            name="password"
             type="password"
-            onChange={this.onChange}
+            onChange={(event) => setPassword(event.target.value) }
           />
           {error && (
             <div className="alert alert-danger">{error}</div>
@@ -75,7 +55,7 @@ class LoginPage extends Component {
           <div className="text-center">
             <ButtonWithProgress
               
-              onClick={this.onClickLogin}
+              onClick={onClickLogin}
               disabled= {pendingApiCall}
               pendingApiCall={pendingApiCall}
               text={t('Login')}
@@ -84,7 +64,6 @@ class LoginPage extends Component {
         </form>
       </div>
     );
-  }
 }
 
 const LoginPageWithTranslation = withTranslation()(LoginPage);
