@@ -1,13 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import ProfileImageWithDefault from "./ProfileImageWithDefault";
 
 const UserListItem = (props) => {
   const { user } = props;
-  const { username, displayName } = user;
+  const { username, displayName, image } = user;
 
   return (
     <Link to={`/user/${username}`} className="list-group-item list-group-item-action">
-        <img className="rounded-circle" alt={`${username}profile`} src={"https://upload.wikimedia.org/wikipedia/commons/7/70/User_icon_BLACK-01.png"} width={"35"} height={"35"}/>
+        <ProfileImageWithDefault 
+          className="rounded-circle" 
+          width="35"
+          heighgt="35"
+          alt={`${username}profile`} image={image}/>
         <span className="pl-2">
             {displayName}@{username}
         </span>
