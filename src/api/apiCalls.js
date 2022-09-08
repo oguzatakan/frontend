@@ -37,6 +37,7 @@ export const postHoax = hoax => {
   return axios.post('/api/1.0/hoxes', hoax);
 }
 
-export const getHoaxes = (page = 0) => {
-  return axios.get('/api/1.0/hoxes?page=' + page);
+export const getHoaxes = (username, page = 0) => {
+  const path = username ? `/api/1.0/users/${username}/hoxes?page=` : '/api/1.0/hoxes?page=';
+  return axios.get( path + page);
 }
