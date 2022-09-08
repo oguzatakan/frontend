@@ -64,7 +64,7 @@ const HoaxSubmit = () => {
         <div className="invalid-feedback">{errors.content}</div>
         {focused && (
           <div className="text-right mt-1">
-            <ButtonWithProgress className="btn btn-primary" onClick={onClickHoaxify} text="Hoaxify" pendingApiCall={pendingApiCall} disabled={pendingApiCall}/>
+            <ButtonWithProgress className="btn btn-primary" onClick={onClickHoaxify} text="Mesajlar" pendingApiCall={pendingApiCall} disabled={pendingApiCall}/>
             <button
               className="btn btn-light d-inline-flex ml-1"
               onClick={() => setFocused(false)}

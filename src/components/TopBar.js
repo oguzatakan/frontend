@@ -105,7 +105,7 @@ const TopBar = (props) => {
             width="50"
             alt="Hoaxify Logo"
           />
-          Hoaxify
+          AtakanOguz
         </Link>
         {links}
       </nav>
