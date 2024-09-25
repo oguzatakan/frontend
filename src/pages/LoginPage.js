@@ -12,7 +12,6 @@ const LoginPage = (props) => {
   const [error, setError] = useState();
 
   const dispatch = useDispatch();
-  //deneme
 
   useEffect(() => {
     setError(undefined)
